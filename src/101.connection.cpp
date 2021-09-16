@@ -1,3 +1,5 @@
+#include <filesystem>
+
 #include "soci/connection-parameters.h"
 #include "soci/session.h"
 #include "soci/soci.h"
@@ -10,9 +12,26 @@ int main(int argc, char** argv) {
   {
     soci::connection_parameters params(soci::sqlite3, kdbname);
     soci::session sqlite3(params);  // create if not exists
+    sqlite3.close();
+    assert(std::filesystem::exists(kdbname));
+    std::filesystem::remove(kdbname);
   }
 
   // create with a string
-  { soci::session sqlite3(soci::sqlite3, kdbname); }
+  {
+    soci::session sqlite3(soci::sqlite3, kdbname);
+    sqlite3.close();
+    assert(std::filesystem::exists(kdbname));
+    std::filesystem::remove(kdbname);
+  }
+
+  // use open
+  {
+    soci::session sqlite3;
+    sqlite3.open(soci::sqlite3, kdbname);
+    sqlite3.close();
+    assert(std::filesystem::exists(kdbname));
+    std::filesystem::remove(kdbname);
+  }
   return 0;
 }
