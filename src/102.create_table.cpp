@@ -5,32 +5,36 @@
 #include "soci/into.h"
 #include "soci/soci.h"
 #include "soci/sqlite3/soci-sqlite3.h"
+#include "soci/statement.h"
 
 int main(int argc, char** argv) {
+  // create with session simple interface
   try {
-    soci::session sql(soci::sqlite3, "hello.sqlite3");
-    sql << "CREATE TABLE test (id INTEGER, name VARCHAR(255))";
-
-    sql << "INSERT INTO test VALUES (1, 'Hello, World!')";
-    sql << "INSERT INTO test VALUES (2, 'Hello, China!')";
-    sql << "INSERT INTO test VALUES (3, 'Hello, America!')";
-    sql << "INSERT INTO test VALUES (4, 'Hello, Australia!')";
-    sql << "INSERT INTO test VALUES (5, 'Hello, UK!')";
-
-    std::vector<int> ids(5);
-    std::vector<std::string> names(5);
-
-    sql << "SELECT * FROM test", soci::into(ids), soci::into(names);
-
-    for (size_t i = 0; i < ids.size(); i++) {
-      std::cout << ids[i] << ":" << names[i] << std::endl;
-    }
-
-    sql << "DROP TABLE test";
-
+    soci::session sqlite3(soci::sqlite3, kdbname);
+    sqlite3 << "create table " << ktable << "(id integer, name varchar(255))";
+    sqlite3 << "drop table " << ktable;
   } catch (std::exception const& e) {
-    std::cerr << e.what() << std::endl;
+    LOGI << e.what() << std::endl;
   }
 
+  // // create with statement
+  // try {
+  //   soci::session sqlite3(soci::sqlite3, kdbname);
+  //   soci::statement create_stmt = sqlite3.prepare << "create table " << ktable << "(id integer, name varchar(255))";
+  //   create_stmt.execute();
+  //   soci::statement drop_stmt = sqlite3.prepare << "drop table " << ktable;
+  //   drop_stmt.execute();
+  // } catch (std::exception const& e) {
+  //   LOGI << e.what() << std::endl;
+  // }
+
+  // // create with session member function
+  // try {
+  //   soci::session sqlite3(soci::sqlite3, kdbname);
+  //   sqlite3.create_table(ktable);
+  //   sqlite3.drop_table(ktable);
+  // } catch (std::exception const& e) {
+  //   LOGI << e.what() << std::endl;
+  // }
   return EXIT_SUCCESS;
 }

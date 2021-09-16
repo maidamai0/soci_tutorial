@@ -11,10 +11,6 @@
 #include "soci/transaction.h"
 #include "soci/use.h"
 
-
-constexpr auto kdbname = "hello.sqlite3";
-constexpr auto ktable = "test";
-
 void print_table() {
   std::cout << "Table: " << ktable << std::endl;
   soci::session sql(soci::sqlite3, kdbname);
