@@ -12,6 +12,7 @@ int main(int argc, char** argv) {
   {
     soci::connection_parameters params(soci::sqlite3, kdbname);
     soci::session sqlite3(params);  // create if not exists
+    std::cout << "database backend: " << sqlite3.get_backend_name() << std::endl;
     sqlite3.close();
     assert(std::filesystem::exists(kdbname));
     std::filesystem::remove(kdbname);
